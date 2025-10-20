@@ -1,8 +1,10 @@
 package com.sky.handler;
 
+import com.sky.constant.MessageConstant;
 import com.sky.exception.BaseException;
 import com.sky.result.Result;
 import lombok.extern.slf4j.Slf4j;
+import java.sql.SQLIntegrityConstraintViolationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -16,7 +18,7 @@ public class GlobalExceptionHandler {
     /**
      * 捕获业务异常
      * @param ex
-     * @return
+     * @return 异常处理结果
      */
     @ExceptionHandler
     public Result exceptionHandler(BaseException ex){
@@ -24,4 +26,20 @@ public class GlobalExceptionHandler {
         return Result.error(ex.getMessage());
     }
 
+    /**
+     * @param SQL异常
+     * @return 异常处理结果
+     */
+    @ExceptionHandler
+    public Result exceptionHandler(SQLIntegrityConstraintViolationException ex) {
+        String message = ex.getMessage();
+        if (message.contains("Duplicate entry")) {
+            String[] spilt = message.split(" ");
+            String username = spilt[2];
+            String msg = username + MessageConstant.ALREADY_EXISTS;
+            return Result.error(msg);
+        } else {
+            return Result.error(MessageConstant.UNKNOWN_ERROR);
+        }
+    }
 }
