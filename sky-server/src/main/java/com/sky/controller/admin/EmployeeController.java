@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 /**
  * 员工管理
@@ -101,5 +104,13 @@ public class EmployeeController {
         log.info("查询员工分页，参数为：{}", employeePageQueryDTO);
         PageResult result = employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(result);
+    }
+    
+    @PostMapping("/status/{status}")
+    @ApiOperation("启用禁用员工账号")
+    public Result enableOrDisable(@PathVariable Integer status, Long id) {
+        log.info("启用禁用员工账号：{}{}", status, id);
+        employeeService.enableOrDisable(status, id);
+        return Result.success();
     }
 }

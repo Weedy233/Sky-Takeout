@@ -97,8 +97,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /**
+     * 分页查询数据
      * @param employeePageQueryDTO
-     * @return 分页查询数据
+     * @return 
      */
     @Override
     public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
@@ -111,5 +112,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> records = page.getResult();
 
         return new PageResult(total, records);
+    }
+    
+    /**
+     * 
+     */
+    @Override
+    public void enableOrDisable(Integer status, Long id) {
+        Employee employee = Employee.builder()
+                .status(status)
+                .id(id)
+                .build();
+        
+        employeeMapper.update(employee);
     }
 }
