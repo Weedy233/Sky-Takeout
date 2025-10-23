@@ -24,7 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 /**
@@ -67,6 +68,7 @@ public class EmployeeController {
                 .userName(employee.getUsername())
                 .name(employee.getName())
                 .token(token)
+
                 .build();
 
         return Result.success(employeeLoginVO);
@@ -113,4 +115,21 @@ public class EmployeeController {
         employeeService.enableOrDisable(status, id);
         return Result.success();
     }
+
+    @GetMapping("{id}")
+    @ApiOperation("通过id获取员工信息")
+    public Result<Employee> getByID(@PathVariable Long id) {
+        log.info("获取员工：{}", id);
+        Employee employee = employeeService.getById(id);
+        return Result.success(employee);
+    }
+    
+    @PutMapping()
+    @ApiOperation("更改员工信息")
+    public Result update(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("更新员工信息：{}", employeeDTO);
+        employeeService.update(employeeDTO);
+        return Result.success();
+    }
+    
 }
