@@ -23,6 +23,10 @@ import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 
+/**
+ * 员工业务默认实现，负责登录鉴权、资料维护、分页查询以及状态切换等操作。
+ */
+
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
@@ -30,10 +34,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeMapper employeeMapper;
 
     /**
-     * 员工登录
+     * 校验用户名与密码并返回合法员工。
      *
-     * @param employeeLoginDTO
-     * @return
+     * @param employeeLoginDTO 登录请求参数
+     * @return 认证通过的员工实体
+     * @throws AccountNotFoundException 账号不存在
+     * @throws PasswordErrorException   密码错误
+     * @throws AccountLockedException   账号被禁用
      */
     public Employee login(EmployeeLoginDTO employeeLoginDTO) {
         String username = employeeLoginDTO.getUsername();
@@ -66,8 +73,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /**
-     * 新增员工
-     * @param employeeDTO
+     * 新增员工并设置默认状态启用、默认密码为系统常量。
+     *
+     * @param employeeDTO 待保存的员工信息
      */
     @Override
     public void save(EmployeeDTO employeeDTO) {
@@ -88,9 +96,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /**
-     * 分页查询数据
-     * @param employeePageQueryDTO
-     * @return 
+     * 根据查询条件分页查询员工列表。
+     *
+     * @param employeePageQueryDTO 查询与分页参数
+     * @return 包含总记录数及当前页数据的分页结果
      */
     @Override
     public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
@@ -106,7 +115,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
     
     /**
-     * 
+     * 根据主键更新员工的启用/禁用状态。
+     *
+     * @param status 目标状态
+     * @param id     员工主键
      */
     @Override
     public void enableOrDisable(Integer status, Long id) {
@@ -119,8 +131,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /**
-     * @param id 要查询的员工 id
-     * @return 
+     * 按 id 查询员工，并对密码字段脱敏。
+     *
+     * @param id 员工主键
+     * @return 员工实体，密码字段以占位符代替
      */
     @Override
     public Employee getById(Long id) {
@@ -130,7 +144,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /**
-     * @param employeeDTO 新的员工DTO
+     * 更新员工的基础资料（不含密码重置逻辑）。
+     *
+     * @param employeeDTO 最新的员工数据
      */
     @Override
     public void update(EmployeeDTO employeeDTO) {

@@ -78,8 +78,6 @@ public class EmployeeController {
 
     /**
      * 退出
-     *
-     * @return
      */
     @PostMapping("/logout")
     @ApiOperation("员工退出")
@@ -90,8 +88,7 @@ public class EmployeeController {
 
     /**
      * 新增员工
-     * @param employeeDTO
-     * @return
+     * @param employeeDTO 员工DTO
      */
     @PostMapping()
     @ApiOperation("新增员工")
