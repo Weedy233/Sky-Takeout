@@ -6,6 +6,7 @@ import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.result.PageResult;
+import com.sky.vo.DishVO;
 
 public interface DishService {
     
@@ -23,5 +24,10 @@ public interface DishService {
      * 批量删除菜品
      */
     void deleteBatch(List<Long> ids);
+
+    /**
+     * 根据 ID 查询菜品
+     */
+    DishVO getById(Long id);
     
 }
