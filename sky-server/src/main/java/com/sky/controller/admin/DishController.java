@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
@@ -92,4 +93,28 @@ public class DishController {
         dishService.updateWithFlavor(dishDTO);
         return Result.success();
     }
+
+    
+    /**
+     * 菜品起售停售
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("起售停售菜品")
+    public Result enableOrDisable(@PathVariable Integer status, Long id) {
+        log.info("起售禁售菜品：{}{}", status, id);
+        dishService.enableOrDisable(status, id);
+        return Result.success();
+    }
+
+    /**
+     * 查询分类下所有菜品
+     */
+    @GetMapping("/list")
+    @ApiOperation("查询分类下所有菜品")
+    public Result<List<Dish>> getDishByCategoryId(@RequestParam Long categoryId) {
+        log.info("查找分类下的所有菜品：{}", categoryId);
+        List<Dish> dishes = dishService.getDishByCategoryId(categoryId);
+        return Result.success(dishes);
+    }
+
 }

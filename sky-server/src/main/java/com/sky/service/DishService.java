@@ -13,7 +13,7 @@ public interface DishService {
     /**
      * 新增菜品和对应的口味
      */
-    Dish saveWithFlavor(DishDTO dishDTO);
+    void saveWithFlavor(DishDTO dishDTO);
 
     /**
      * 新增菜品和对应的口味
@@ -34,5 +34,15 @@ public interface DishService {
      * 修改菜品基本信息和对应口味信息
      */
     void updateWithFlavor(DishDTO dishDTO);
-    
+
+    /**
+     * 菜品起售停售
+     */
+    void enableOrDisable(Integer status, Long id);
+
+    /**
+     * 查询分类下所有菜品
+     */
+    List<Dish> getDishByCategoryId(Long categoryId);
+
 }

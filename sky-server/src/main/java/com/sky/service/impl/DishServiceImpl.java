@@ -41,7 +41,7 @@ public class DishServiceImpl implements DishService{
      */
     @Override
     @Transactional
-    public Dish saveWithFlavor(DishDTO dishDTO) {
+    public void saveWithFlavor(DishDTO dishDTO) {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);
 
@@ -56,8 +56,6 @@ public class DishServiceImpl implements DishService{
             });
             dishFlavorMapper.insertBatch(flavors);
         }
-
-        return dish;
     }
 
     /**
@@ -139,5 +137,27 @@ public class DishServiceImpl implements DishService{
             });
             dishFlavorMapper.insertBatch(flavors);
         }
+    }
+
+    /**
+     * 菜品起售停售
+     */
+    @Override
+    public void enableOrDisable(Integer status, Long id) {
+        Dish dish = Dish.builder()
+                        .status(status)
+                        .id(id)
+                        .build();
+
+        dishMapper.update(dish);
+    }
+
+    /**
+     * 查询分类下所有菜品
+     */
+    @Override
+    public List<Dish> getDishByCategoryId(Long categoryId) {
+        List<Dish> dishes = dishMapper.getDishesByCategoryId(categoryId);
+        return dishes;
     }
 }
