@@ -38,7 +38,7 @@ public class SetmealController {
 
     @Autowired
     private SetmealService setmealService;
-    
+
     /**
      * 新增套餐
      * @param setmealDTO
@@ -66,19 +66,6 @@ public class SetmealController {
     }
 
     /**
-     * 更改套餐信息
-     * @param setmealDTO
-     * @return
-     */
-    @PutMapping()
-    @ApiOperation("更改套餐信息")
-    public Result update(@RequestBody SetmealDTO setmealDTO) {
-        log.info("更新套餐信息：{}", setmealDTO);
-        setmealService.updateWithDish(setmealDTO);
-        return Result.success();
-    }
-
-    /**
      * 套餐分页查询
      * @param setmealPageQueryDTO
      * @return
@@ -89,6 +76,19 @@ public class SetmealController {
         log.info("分页查询套餐：{}", setmealPageQueryDTO);
         PageResult result = setmealService.pageQuery(setmealPageQueryDTO);
         return Result.success(result);
+    }
+
+    /**
+     * 更改套餐信息
+     * @param setmealDTO
+     * @return
+     */
+    @PutMapping
+    @ApiOperation("更改套餐信息")
+    public Result update(@RequestBody SetmealDTO setmealDTO) {
+        log.info("更新套餐信息：{}", setmealDTO);
+        setmealService.updateWithDish(setmealDTO);
+        return Result.success();
     }
 
     /**

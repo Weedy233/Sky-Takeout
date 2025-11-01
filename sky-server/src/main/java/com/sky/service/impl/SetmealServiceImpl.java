@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.vo.SetmealVO;
@@ -39,12 +41,12 @@ public class SetmealServiceImpl implements SetmealService{
 
         Long setmealId = setmeal.getId();
 
-        List<SetmealDish> dishes = setmealDTO.getSetmealDishes();
-        if (dishes != null && dishes.size() > 0) {
-            dishes.forEach(dish -> {
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        if (setmealDishes != null && setmealDishes.size() > 0) {
+            setmealDishes.forEach(dish -> {
                 dish.setSetmealId(setmealId);
             });
-            setmealDishMapper.insertBatch(dishes);
+            setmealDishMapper.insertBatch(setmealDishes);
         }
     }
 
@@ -74,8 +76,24 @@ public class SetmealServiceImpl implements SetmealService{
      */
     @Override
     public void updateWithDish(SetmealDTO setmealDTO) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO, setmeal);
+
+        // 添加套餐数据
+        setmealMapper.update(setmeal);
+
+        // 删除套餐现有菜品
+        Long setmealId = setmealDTO.getId();
+        setmealDishMapper.deleteBySetmealId(setmealId);
+
+        // 添加新菜品
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        if (setmealDishes != null && setmealDishes.size() > 0) {
+            setmealDishes.forEach(dish -> {
+                dish.setSetmealId(setmealId);
+            });
+            setmealDishMapper.insertBatch(setmealDishes);
+        }
     }
 
     /**
@@ -85,8 +103,9 @@ public class SetmealServiceImpl implements SetmealService{
      */
     @Override
     public PageResult pageQuery(SetmealPageQueryDTO setmealPageQueryDTO) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'pageQuery'");
+        PageHelper.startPage(setmealPageQueryDTO.getPage(), setmealPageQueryDTO.getPageSize());
+        Page<SetmealVO> page = setmealMapper.pageQuery(setmealPageQueryDTO);
+        return new PageResult(page.getTotal(), page.getResult());
     }
 
     /**
