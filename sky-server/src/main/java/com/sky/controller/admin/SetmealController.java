@@ -48,7 +48,7 @@ public class SetmealController {
     @ApiOperation("新增套餐")
     public Result save(@RequestBody SetmealDTO setmealDTO) {
         log.info("新增套餐：{}", setmealDTO);
-        setmealService.save(setmealDTO);
+        setmealService.saveWithDish(setmealDTO);
         return Result.success();
     }
 
@@ -74,7 +74,7 @@ public class SetmealController {
     @ApiOperation("更改套餐信息")
     public Result update(@RequestBody SetmealDTO setmealDTO) {
         log.info("更新套餐信息：{}", setmealDTO);
-        setmealService.update(setmealDTO);
+        setmealService.updateWithDish(setmealDTO);
         return Result.success();
     }
 
@@ -90,8 +90,7 @@ public class SetmealController {
         PageResult result = setmealService.pageQuery(setmealPageQueryDTO);
         return Result.success(result);
     }
-    
-    
+
     /**
      * 套餐起售停售
      * @param status
