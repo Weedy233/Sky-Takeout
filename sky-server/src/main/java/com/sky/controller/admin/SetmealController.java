@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 @RequestMapping("/admin/setmeal")
 @Slf4j
-@Api(tags = "员工管理相关接口")
+@Api(tags = "套餐管理相关接口")
 public class SetmealController {
 
     @Autowired
