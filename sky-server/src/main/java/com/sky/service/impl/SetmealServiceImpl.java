@@ -33,7 +33,7 @@ public class SetmealServiceImpl implements SetmealService{
      */
     @Override
     public void saveWithDish(SetmealDTO setmealDTO) {
-        SetmealVO setmeal = new SetmealVO();
+        Setmeal setmeal = new Setmeal();
         BeanUtils.copyProperties(setmealDTO, setmeal);
         setmealMapper.insert(setmeal);
 
