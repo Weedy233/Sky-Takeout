@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
+import com.sky.vo.SetmealVO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
 import com.sky.mapper.SetmealDishMapper;
@@ -32,7 +33,7 @@ public class SetmealServiceImpl implements SetmealService{
      */
     @Override
     public void saveWithDish(SetmealDTO setmealDTO) {
-        Setmeal setmeal = new Setmeal();
+        SetmealVO setmeal = new SetmealVO();
         BeanUtils.copyProperties(setmealDTO, setmeal);
         setmealMapper.insert(setmeal);
 
@@ -53,9 +54,18 @@ public class SetmealServiceImpl implements SetmealService{
      * @return
      */
     @Override
-    public Setmeal getById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getById'");
+    public SetmealVO getById(Long id) {
+        // 获取套餐本身数据
+        Setmeal setmeal = setmealMapper.getById(id);
+        
+        // 查询套餐包含的菜品数据
+        List<SetmealDish> dishes = setmealDishMapper.getSetmealDishBySetmealId(setmeal.getId());
+
+        // 整合并返回数据
+        SetmealVO setmealVO = new SetmealVO();
+        BeanUtils.copyProperties(setmeal, setmealVO);
+        setmealVO.setSetmealDishes(dishes);
+        return setmealVO;
     }
 
     /**

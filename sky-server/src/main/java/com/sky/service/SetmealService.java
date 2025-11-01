@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
-import com.sky.entity.Setmeal;
+import com.sky.vo.SetmealVO;
 import com.sky.result.PageResult;
 
 @Service
@@ -23,7 +23,7 @@ public interface SetmealService {
      * @param id
      * @return
      */
-    Setmeal getById(Long id);
+    SetmealVO getById(Long id);
 
     /**
      * 更新套餐

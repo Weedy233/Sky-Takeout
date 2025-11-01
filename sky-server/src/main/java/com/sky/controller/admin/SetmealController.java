@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
-import com.sky.entity.Setmeal;
+import com.sky.vo.SetmealVO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.SetmealService;
@@ -59,10 +59,10 @@ public class SetmealController {
      */
     @GetMapping("/{id}")
     @ApiOperation("根据id查询套餐")
-    public Result<Setmeal> getById(@PathVariable Long id) {
+    public Result<SetmealVO> getById(@PathVariable Long id) {
         log.info("获取套餐：{}", id);
-        Setmeal setmeal = setmealService.getById(id);
-        return Result.success(setmeal);
+        SetmealVO setmealVO = setmealService.getById(id);
+        return Result.success(setmealVO);
     }
 
     /**
