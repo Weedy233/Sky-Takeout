@@ -41,7 +41,7 @@ public class DishServiceImpl implements DishService{
      */
     @Override
     @Transactional
-    public Dish saveWithFlavor(DishDTO dishDTO) {
+    public void saveWithFlavor(DishDTO dishDTO) {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);
 
@@ -56,8 +56,6 @@ public class DishServiceImpl implements DishService{
             });
             dishFlavorMapper.insertBatch(flavors);
         }
-
-        return dish;
     }
 
     /**
