@@ -1,5 +1,9 @@
 package com.sky.test;
 
+import static org.mockito.Answers.values;
+
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
@@ -42,5 +46,64 @@ public class SpringDataRedisTest {
 
         redisTemplate.opsForValue().setIfAbsent("lock", 1);
         redisTemplate.opsForValue().setIfAbsent("lock", 2);
+    }
+
+
+    @Test
+    public void testHash() {
+        HashOperations hashOperations = redisTemplate.opsForHash();
+
+        hashOperations.put("100", "name", "weedy");
+        hashOperations.put("100", "age", "24");
+
+        String name = (String) hashOperations.get("100", "name");
+        System.out.println(name);
+
+        Set keys = hashOperations.keys("100");
+        System.out.println(keys);
+
+        List values = hashOperations.values("100");
+        System.out.println(values);
+
+        hashOperations.delete("100", "age");
+    }
+
+
+    @Test
+    public void testList() {
+        ListOperations listOperations = redisTemplate.opsForList();
+
+        listOperations.leftPushAll("MyGo!!!!!", "tomori", "anon", "taki", "soyo", "rana");
+        listOperations.leftPush("MyGO!!!!!", "macha pafue");
+
+        List range = listOperations.range("MyGO!!!!!", 0, -1);
+        System.out.println(range);
+        
+        listOperations.leftPop("MyGO!!!!!");
+
+        Long size = listOperations.size("mylist");
+        System.out.println(size);
+    }
+
+    @Test
+    public void testSet() {
+        SetOperations setOperations = redisTemplate.opsForSet();
+
+        setOperations.add("set1", "a", "b", "c", "d");
+        setOperations.add("set2", "a", "b", "x", "y");
+
+        Set members = setOperations.members("set1");
+        System.out.println(members);
+
+        Long size = setOperations.size("set1");
+        System.out.println(size);
+
+        Set intersect = setOperations.intersect("set1", "set2");
+        System.out.println(intersect);
+
+        Set union = setOperations.union("set1", "set2");
+        System.out.println(union);
+
+        setOperations.remove("set1", "a", "b");
     }
 }
