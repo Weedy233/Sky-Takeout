@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer; // 1. 导入
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,15 +12,23 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @Slf4j
 public class RedisConfiguration {
-    
+
     @Bean
-    public RedisTemplate redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) { // 建议加上泛型
         log.info("开始创建 redis 模板对象...");
-        RedisTemplate redisTemplate = new RedisTemplate();
-        // 设置 redis 的连接工厂对象
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>(); // 建议加上泛型
+
         redisTemplate.setConnectionFactory(redisConnectionFactory);
-        // 设置 redis key 的序列化器
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
+
+        StringRedisSerializer stringSerializer = new StringRedisSerializer();
+        GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer();
+
+        redisTemplate.setKeySerializer(stringSerializer);
+        redisTemplate.setHashKeySerializer(stringSerializer);
+        redisTemplate.setValueSerializer(jsonSerializer);
+        redisTemplate.setHashValueSerializer(jsonSerializer);
+        redisTemplate.afterPropertiesSet();
+
         return redisTemplate;
     }
 }

@@ -1,7 +1,5 @@
 package com.sky.test;
 
-import static org.mockito.Answers.values;
-
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
