@@ -1,5 +1,6 @@
 package com.sky.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -40,7 +41,6 @@ public class DishServiceImpl implements DishService{
      * 新增菜品和对应的口味
      */
     @Override
-    @Transactional
     public void saveWithFlavor(DishDTO dishDTO) {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);
@@ -159,5 +159,31 @@ public class DishServiceImpl implements DishService{
     public List<Dish> getDishByCategoryId(Long categoryId) {
         List<Dish> dishes = dishMapper.getDishesByCategoryId(categoryId);
         return dishes;
+    }
+
+    /**
+     * 条件查询菜品和口味
+     * 
+     * @param dish
+     * @return
+     */
+    @Override
+    public List<DishVO> listWithFlavor(Dish dish) {
+        List<Dish> dishList = dishMapper.list(dish);
+
+        List<DishVO> dishVOList = new ArrayList<>();
+
+        for (Dish d : dishList) {
+            DishVO dishVO = new DishVO();
+            BeanUtils.copyProperties(d, dishVO);
+
+            // 根据菜品id查询对应的口味
+            List<DishFlavor> flavors = dishFlavorMapper.getFlavorsByDishId(d.getId());
+
+            dishVO.setFlavors(flavors);
+            dishVOList.add(dishVO);
+        }
+
+        return dishVOList;
     }
 }

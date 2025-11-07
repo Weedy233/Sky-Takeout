@@ -45,4 +45,9 @@ public interface DishMapper {
     void update(Dish dish);
 
     List<Dish> getDishesByCategoryId(Long categoryId);
+
+    /**
+     * 条件查询菜品
+     */
+    List<Dish> list(Dish dish);
 }
