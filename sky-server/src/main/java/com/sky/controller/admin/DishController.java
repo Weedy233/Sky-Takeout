@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +27,6 @@ import com.sky.vo.DishVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PutMapping;
 
 
 /**
@@ -48,6 +49,7 @@ public class DishController {
      * 新增菜品
      */
     @PostMapping
+    @CacheEvict(cacheNames = "setmealCache", key = "#dishDTO.categoryId")
     @ApiOperation("新增菜品")
     public Result save(@RequestBody DishDTO dishDTO) {
         log.info("新建菜品：{}", dishDTO);
@@ -71,7 +73,8 @@ public class DishController {
     /**
      * 批量删除菜品
      */
-    @DeleteMapping()
+    @DeleteMapping
+    @CacheEvict(cacheNames = "setmealCache", allEntries = true)
     @ApiOperation("批量删除菜品")
     public Result delete(@RequestParam List<Long> ids) {
         log.info("批量删除菜品：{}", ids);
@@ -96,6 +99,7 @@ public class DishController {
      * 修改菜品
      */
     @PutMapping
+    @CacheEvict(cacheNames = "setmealCache", allEntries = true)
     @ApiOperation("修改菜品")
     public Result update(@RequestBody DishDTO dishDTO) {
         log.info("修改菜品：{}", dishDTO);
@@ -108,6 +112,7 @@ public class DishController {
      * 菜品起售停售
      */
     @PostMapping("/status/{status}")
+    @CacheEvict(cacheNames = "setmealCache", allEntries = true)
     @ApiOperation("起售停售菜品")
     public Result enableOrDisable(@PathVariable Integer status, Long id) {
         log.info("起售禁售菜品：{}{}", status, id);
