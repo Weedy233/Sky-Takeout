@@ -54,6 +54,8 @@ public class SpringDataRedisTest {
         hashOperations.put("100", "name", "weedy");
         hashOperations.put("100", "age", "24");
 
+        hashOperations.put("100", "中文名", "温蒂");
+
         String name = (String) hashOperations.get("100", "name");
         System.out.println(name);
 
@@ -85,7 +87,7 @@ public class SpringDataRedisTest {
 
     @Test
     public void testSet() {
-        SetOperations setOperations = redisTemplate.opsForSet();
+        SetOperations<String, Object> setOperations = redisTemplate.opsForSet();
 
         setOperations.add("set1", "a", "b", "c", "d");
         setOperations.add("set2", "a", "b", "x", "y");
