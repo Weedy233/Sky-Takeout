@@ -94,15 +94,43 @@ public class ShoppingCartServiceImpl implements ShoppingCartService{
         return list;
     }
 
+    /**
+     * 清空购物车
+     */
     @Override
     public void cleanShoppingCart() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'clean'");
+        shoppingCartMapper.deleteByUserId(BaseContext.getCurrentId());
     }
 
+    /**
+     * 删除购物车中一个商品
+     * @param shoppingCartDTO
+     */
     @Override
-    public void sub(ShoppingCartDTO shoppingCartDTO) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'sub'");
+    public void subShoppingCart(ShoppingCartDTO shoppingCartDTO) {
+
+        // 判断当前加入的商品再购物车中是否已存在
+        ShoppingCart shoppingCart = new ShoppingCart();
+        BeanUtils.copyProperties(shoppingCartDTO, shoppingCart);
+
+        // 设置 userId
+        shoppingCart.setUserId(BaseContext.getCurrentId());
+
+        List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
+
+        if (list == null || list.size() == 0) {
+            // 如果商品不存在，退出
+            return;
+        } 
+
+        ShoppingCart cart = list.get(0);
+        int number = cart.getNumber();
+        if (number == 1) {
+            shoppingCartMapper.deleteById(cart.getId());
+
+        } else if (number >= 2) {
+            cart.setNumber(number - 1);
+            shoppingCartMapper.updateNumberById(cart);
+        }
     }
 }

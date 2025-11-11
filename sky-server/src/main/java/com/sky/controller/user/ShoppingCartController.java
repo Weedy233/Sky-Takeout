@@ -66,7 +66,7 @@ public class ShoppingCartController {
     @ApiOperation("删除购物车中一个商品")
     public Result sub(@RequestBody ShoppingCartDTO shoppingCartDTO) {
         log.info("购物车删除商品：{}", shoppingCartDTO);
-        shoppingCartService.sub(shoppingCartDTO);
+        shoppingCartService.subShoppingCart(shoppingCartDTO);
         return Result.success();
     }
 
