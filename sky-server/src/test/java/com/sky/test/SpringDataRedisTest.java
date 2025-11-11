@@ -18,7 +18,7 @@ import org.springframework.data.redis.core.ZSetOperations;
 public class SpringDataRedisTest {
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @SuppressWarnings("unused")
     @Test
