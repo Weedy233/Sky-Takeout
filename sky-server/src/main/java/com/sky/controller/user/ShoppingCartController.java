@@ -1,5 +1,7 @@
 package com.sky.controller.user;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,9 +38,9 @@ public class ShoppingCartController {
      */
     @GetMapping("/list")
     @ApiOperation("查看购物车")
-    public Result<ShoppingCart> list() {
+    public Result<List<ShoppingCart>> list() {
         log.info("查看购物车商品");
-        ShoppingCart shoppingCart = shoppingCartService.list();
+        List<ShoppingCart> shoppingCart = shoppingCartService.showShoppingCart();
         return Result.success(shoppingCart);
     }
 
@@ -76,7 +78,7 @@ public class ShoppingCartController {
     @ApiOperation("清空购物车")
     public Result clean() {
         log.info("清空购物车");
-        shoppingCartService.clean();
+        shoppingCartService.cleanShoppingCart();
         return Result.success();
     }
 }

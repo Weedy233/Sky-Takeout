@@ -82,14 +82,20 @@ public class ShoppingCartServiceImpl implements ShoppingCartService{
 
     }
 
+    /**
+     * 查看购物车
+     * @return 购物车列表
+     */
     @Override
-    public ShoppingCart list() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'list'");
+    public List<ShoppingCart> showShoppingCart() {
+        ShoppingCart queryShoppingCart = new ShoppingCart();
+        queryShoppingCart.setUserId(BaseContext.getCurrentId());
+        List<ShoppingCart> list = shoppingCartMapper.list(queryShoppingCart);
+        return list;
     }
 
     @Override
-    public void clean() {
+    public void cleanShoppingCart() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'clean'");
     }
