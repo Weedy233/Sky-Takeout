@@ -33,7 +33,10 @@ import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService{
 
     @Autowired
@@ -133,7 +136,32 @@ public class OrderServiceImpl implements OrderService{
         OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
         vo.setPackageStr(jsonObject.getString("package"));
 
+        // 检查是否为模拟支付，如果是则延迟触发支付成功回调
+        if (isMockPayment(jsonObject)) {
+            // 延迟3秒后自动触发支付成功回调，模拟用户支付过程
+            new Thread(() -> {
+                try {
+                    Thread.sleep(3000); // 延迟3秒
+                    log.info("=== 自动触发模拟支付成功回调 ===");
+                    paySuccess(ordersPaymentDTO.getOrderNumber());
+                    log.info("=== 模拟支付成功，订单状态已更新 ===");
+                } catch (Exception e) {
+                    log.error("自动触发支付回调失败", e);
+                }
+            }).start();
+        }
+
         return vo;
+    }
+
+    /**
+     * 检查是否为模拟支付
+     * @param jsonObject
+     * @return
+     */
+    private boolean isMockPayment(JSONObject jsonObject) {
+        String packageStr = jsonObject.getString("package");
+        return packageStr != null && packageStr.contains("MOCK_PREPAY_");
     }
 
     /**

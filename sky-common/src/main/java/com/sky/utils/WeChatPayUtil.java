@@ -164,6 +164,11 @@ public class WeChatPayUtil {
      * @return
      */
     public JSONObject pay(String orderNum, BigDecimal total, String description, String openid) throws Exception {
+        // 检查是否为模拟模式（当商户号为占位符时启用模拟模式）
+        if (isMockMode()) {
+            return mockPay(orderNum, total, description, openid);
+        }
+        
         //统一下单，生成预支付交易单
         String bodyAsString = jsapi(orderNum, total, description, openid);
         //解析返回结果
@@ -203,6 +208,55 @@ public class WeChatPayUtil {
             return jo;
         }
         return jsonObject;
+    }
+
+    /**
+     * 检查是否为模拟模式
+     * @return
+     */
+    private boolean isMockMode() {
+        return "***".equals(weChatProperties.getMchid()) || 
+               weChatProperties.getMchid() == null || 
+               weChatProperties.getMchid().trim().isEmpty() ||
+               "***".equals(weChatProperties.getPrivateKeyFilePath()) ||
+               weChatProperties.getPrivateKeyFilePath() == null ||
+               "***".equals(weChatProperties.getApiV3Key());
+    }
+
+    /**
+     * 模拟支付
+     *
+     * @param orderNum    商户订单号
+     * @param total       金额，单位 元
+     * @param description 商品描述
+     * @param openid      微信用户的openid
+     * @return
+     */
+    private JSONObject mockPay(String orderNum, BigDecimal total, String description, String openid) {
+        System.out.println("=== 模拟微信支付模式 ===");
+        System.out.println("订单号: " + orderNum);
+        System.out.println("支付金额: " + total);
+        System.out.println("商品描述: " + description);
+        System.out.println("用户openid: " + openid);
+        
+        // 生成模拟的预支付交易单ID
+        String mockPrepayId = "MOCK_PREPAY_" + System.currentTimeMillis() + "_" + RandomStringUtils.randomNumeric(6);
+        String timeStamp = String.valueOf(System.currentTimeMillis() / 1000);
+        String nonceStr = RandomStringUtils.randomNumeric(32);
+        
+        // 构造模拟的支付参数
+        JSONObject jo = new JSONObject();
+        jo.put("timeStamp", timeStamp);
+        jo.put("nonceStr", nonceStr);
+        jo.put("package", "prepay_id=" + mockPrepayId);
+        jo.put("signType", "RSA");
+        // 模拟签名
+        jo.put("paySign", "MOCK_SIGN_" + Base64.getEncoder().encodeToString(("mock_" + orderNum + "_" + timeStamp).getBytes()));
+        
+        System.out.println("生成的模拟支付参数: " + jo);
+        System.out.println("=== 模拟支付完成，等待支付回调 ===");
+        
+        return jo;
     }
 
     /**

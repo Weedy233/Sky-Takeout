@@ -9,7 +9,9 @@ import com.wechat.pay.contrib.apache.httpclient.util.AesUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +30,64 @@ public class PayNotifyController {
     private OrderService orderService;
     @Autowired
     private WeChatProperties weChatProperties;
+
+    /**
+     * 模拟支付成功回调（用于测试）
+     *
+     * @param outTradeNo 商户订单号
+     * @return
+     */
+    @GetMapping("/mockPaySuccess")
+    public HashMap<String, Object> mockPaySuccess(@RequestParam String outTradeNo) {
+        log.info("=== 模拟支付成功回调 ===");
+        log.info("商户平台订单号：{}", outTradeNo);
+        
+        // 检查是否为模拟模式
+        if (!isMockMode()) {
+            HashMap<String, Object> error = new HashMap<>();
+            error.put("code", "ERROR");
+            error.put("message", "当前不是模拟模式，无法使用模拟支付");
+            return error;
+        }
+        
+        try {
+            // 生成模拟的微信支付交易号
+            String mockTransactionId = "MOCK_TX_" + System.currentTimeMillis();
+            
+            // 业务处理，修改订单状态、来单提醒
+            orderService.paySuccess(outTradeNo);
+            
+            log.info("模拟微信支付交易号：{}", mockTransactionId);
+            log.info("=== 模拟支付回调完成 ===");
+            
+            HashMap<String, Object> result = new HashMap<>();
+            result.put("code", "SUCCESS");
+            result.put("message", "模拟支付成功");
+            result.put("out_trade_no", outTradeNo);
+            result.put("transaction_id", mockTransactionId);
+            
+            return result;
+        } catch (Exception e) {
+            log.error("模拟支付回调失败", e);
+            HashMap<String, Object> error = new HashMap<>();
+            error.put("code", "ERROR");
+            error.put("message", "模拟支付失败：" + e.getMessage());
+            return error;
+        }
+    }
+
+    /**
+     * 检查是否为模拟模式
+     * @return
+     */
+    private boolean isMockMode() {
+        return "***".equals(weChatProperties.getMchid()) || 
+               weChatProperties.getMchid() == null || 
+               weChatProperties.getMchid().trim().isEmpty() ||
+               "***".equals(weChatProperties.getPrivateKeyFilePath()) ||
+               weChatProperties.getPrivateKeyFilePath() == null ||
+               "***".equals(weChatProperties.getApiV3Key());
+    }
 
     /**
      * 支付成功回调
